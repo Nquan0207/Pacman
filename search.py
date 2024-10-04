@@ -87,11 +87,65 @@ def depthFirstSearch(problem: SearchProblem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
+    from util import Stack  # Assuming util.Stack is available for stack operations
+    stack = Stack()
+    stack.push((problem.getStartState(), []))
+    visited = set()
+
+    while not stack.isEmpty():
+        # Pop the current node and the path taken to reach it
+        state, actions = stack.pop()
+        # If the state is the goal, return the path of actions
+        if problem.isGoalState(state):
+            return actions
+
+        # If the state has not been visited, explore its successors
+        if state not in visited:
+            visited.add(state)  # Mark as visited
+
+            # Get all successors: (successor, action, stepCost)
+            for successor, action, _ in problem.getSuccessors(state):
+                if successor not in visited:
+                    # Push the successor with the updated path of actions
+                    stack.push((successor, actions + [action]))
+
+    # If no solution is found, raise an error
+    return []
+
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
+    from util import Queue  # Assuming you have a Queue utility available
+
+    # Initialize the queue with the start state and an empty list of actions
+    queue = Queue()
+    queue.push((problem.getStartState(), []))
+
+    # Initialize the visited set to track explored states
+    visited = set()
+
+    while not queue.isEmpty():
+        # Dequeue the current state and the path of actions to reach it
+        state, actions = queue.pop()
+
+        # If the current state is the goal, return the path of actions
+        if problem.isGoalState(state):
+            return actions
+
+        # If the state has not been visited, explore its successors
+        if state not in visited:
+            visited.add(state)  # Mark the state as visited
+
+            # Get all successors: (successor, action, stepCost)
+            for successor, action, _ in problem.getSuccessors(state):
+                if successor not in visited:
+                    # Enqueue the successor with the updated path of actions
+                    queue.push((successor, actions + [action]))
+
+    # If no solution is found, return an empty list (or raise an error)
+    return []
     util.raiseNotDefined()
 
 def uniformCostSearch(problem: SearchProblem):
