@@ -115,38 +115,38 @@ def depthFirstSearch(problem: SearchProblem):
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem: SearchProblem):
-    """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    from util import Queue  # Assuming you have a Queue utility available
+    """
+    Search the shallowest nodes in the search tree first.
+    """
+    # Import the Queue data structure
+    from util import Queue
 
-    # Initialize the queue with the start state and an empty list of actions
-    queue = Queue()
-    queue.push((problem.getStartState(), []))
+    # Create a queue for BFS
+    fringe = Queue()
 
-    # Initialize the visited set to track explored states
-    visited = set()
+    # Create a set to store explored states
+    explored = set()
 
-    while not queue.isEmpty():
-        # Dequeue the current state and the path of actions to reach it
-        state, actions = queue.pop()
+    # Push the start state onto the fringe
+    start_state = problem.getStartState()
+    fringe.push((start_state, []))  # (state, actions)
 
-        # If the current state is the goal, return the path of actions
+    while not fringe.isEmpty():
+        state, actions = fringe.pop()
+
         if problem.isGoalState(state):
             return actions
 
-        # If the state has not been visited, explore its successors
-        if state not in visited:
-            visited.add(state)  # Mark the state as visited
+        if state not in explored:
+            explored.add(state)
 
-            # Get all successors: (successor, action, stepCost)
-            for successor, action, _ in problem.getSuccessors(state):
-                if successor not in visited:
-                    # Enqueue the successor with the updated path of actions
-                    queue.push((successor, actions + [action]))
+            for successor, action, stepCost in problem.getSuccessors(state):
+                if successor not in explored:
+                    new_actions = actions + [action]
+                    fringe.push((successor, new_actions))
 
-    # If no solution is found, return an empty list (or raise an error)
+    # If we get here, no solution was found
     return []
-    util.raiseNotDefined()
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
@@ -162,8 +162,33 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    from util import PriorityQueue
+
+    # Initialize the priority queue with the start state, empty path, and initial cost
+    start_state = problem.getStartState()
+    frontier = PriorityQueue()
+    frontier.push((start_state, [], 0), heuristic(start_state, problem))
+
+    # Set to keep track of explored states
+    explored = set()
+
+    while not frontier.isEmpty():
+        current_state, path, cost = frontier.pop()
+
+        if problem.isGoalState(current_state):
+            return path
+
+        if current_state not in explored:
+            explored.add(current_state)
+
+            for successor, action, step_cost in problem.getSuccessors(current_state):
+                if successor not in explored:
+                    new_path = path + [action]
+                    new_cost = cost + step_cost
+                    new_priority = new_cost + heuristic(successor, problem)
+                    frontier.push((successor, new_path, new_cost), new_priority)
+
+    return []  # Return an empty list if no path is found
 
 
 # Abbreviations
