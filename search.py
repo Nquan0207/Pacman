@@ -151,7 +151,7 @@ def breadthFirstSearch(problem: SearchProblem):
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-
+    from util import PriorityQueue
     frontier = PriorityQueue() 
     s = problem.getStartState()
     frontier.push((0,s),0)
